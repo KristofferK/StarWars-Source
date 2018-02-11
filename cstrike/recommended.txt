@@ -1,0 +1,6 @@
+
+    sv_downloadurl and bzip2:
+        http://forums.mattie.info/cs/forums/viewtopic.php?t=516
+        http://forums.srcds.com/showthread.php?tid=1077
+        http://www.mani-admin-plugin.com/oldsite/forums/viewtopic.php?t=8549
+        

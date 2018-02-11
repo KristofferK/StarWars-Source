@@ -1,0 +1,7 @@
+"Sprite"
+{
+    "$spriteorientation" "vp_parallel"
+    "$spriteorigin" "[ 0.50 0.50 ]"
+    "$basetexture" "b4p/b4p_tracers/b4p_tracer3"
+    "$spriterendermode" 8
+}

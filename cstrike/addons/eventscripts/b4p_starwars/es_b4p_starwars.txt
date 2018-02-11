@@ -1,0 +1,1166 @@
+block load
+{
+    //////////////////////////////////////
+    // Defaults
+    //////////////////////////////////////
+
+    es_xsetinfo phys_pushscale 5000
+
+    es_xsetinfo b4p_sw_jediModeEnabled 0
+    es_xsetinfo b4p_sw_classicModeEnabled 0
+
+    es_xsetinfo b4p_sw_bobaJetsEnabled 0
+    es_xsetinfo b4p_sw_weaponSoundsEnabled 1
+    es_xsetinfo b4p_sw_charSoundsEnabled 1
+    es_xsetinfo b4p_sw_lasers_trigEnabled 1
+    es_xsetinfo b4p_sw_lasers_enabled 1
+    es_xsetinfo b4p_sw_lasers_teamColorsEnabled 1
+
+    es_xsetinfo b4p_sw_bobaFettGravity 0.25
+    es_xsetinfo b4p_sw_normalGravity 1
+
+    es_xsetinfo b4p_sw_jabbaLaughEnabled 1
+
+
+    //////////////////////////////////////
+    // Admins
+    //////////////////////////////////////
+    // say "swadmin" in game to access the admin menu
+    es_xsetinfo b4p_sw_admins "STEAM_0:0:00001,STEAM_0:1:7589873"
+    // example: es_xsetinfo b4p_sw_admins "STEAM_0:0:00001,STEAM_0:0:00002,STEAM_0:0:00003"
+
+    //////////////////////////////////////
+    // laser offsets
+    //////////////////////////////////////
+
+    // the forward offset *should* be different for every gun, but this seems about right on average (at least for 3rd person view)
+    // first person view looks better at around 32 or even maybe 30, so 36 is a good compromise
+    es_xsetinfo b4p_sw_lasers_forwardOffset 36
+    // these next two offsets look about perfect in my opinion
+    es_xsetinfo b4p_sw_lasers_rightOffset 3
+    es_xsetinfo b4p_sw_lasers_upOffset -3
+
+    //////////////////////////////////////
+    // Model Information
+    //////////////////////////////////////
+
+    es_xsetinfo b4p_sw_modelHome "player/b4p"
+
+    es_xsetinfo b4p_sw_empireModelCount 5
+    es_xformat b4p_sw_EmpireModelName1 "Storm Trooper"
+    es_xformat b4p_sw_EmpireModelFileName1 "b4p_stormt"
+    es_xformat b4p_sw_EmpireModelName2 "Snow Trooper"
+    es_xformat b4p_sw_EmpireModelFileName2 "b4p_snowtrooper"
+    es_xformat b4p_sw_EmpireModelName3 "Rodian"
+    es_xformat b4p_sw_EmpireModelFileName3 "b4p_rodian"
+    es_xformat b4p_sw_EmpireModelName4 "Imperial Officer"
+    es_xformat b4p_sw_EmpireModelFileName4 "b4p_imperial"
+    es_xformat b4p_sw_EmpireModelName5 "Boba Fett"
+    es_xformat b4p_sw_EmpireModelFileName5 "b4p_bobafett"
+    es_xformat b4p_sw_EmpireModelName6 "Darth Vader"
+    es_xformat b4p_sw_EmpireModelFileName6 "b4p_vader"
+
+    es_xsetinfo b4p_sw_rebelModelCount 5
+    es_xformat b4p_sw_RebelModelName1 "Rebel Soldier"
+    es_xformat b4p_sw_RebelModelFileName1 "b4p_rebel"
+    es_xformat b4p_sw_RebelModelName2 "Wookie"
+    es_xformat b4p_sw_RebelModelFileName2 "b4p_chewbacca"
+    es_xformat b4p_sw_RebelModelName3 "Jawa"
+    es_xformat b4p_sw_RebelModelFileName3 "b4p_jawa"
+    es_xformat b4p_sw_RebelModelName4 "Tusken Raider"
+    es_xformat b4p_sw_RebelModelFileName4 "b4p_tusken"
+    es_xformat b4p_sw_RebelModelName5 "C3PO"
+    es_xformat b4p_sw_RebelModelFileName5 "b4p_c3po"
+    es_xformat b4p_sw_RebelModelName6 "Yoda"
+    es_xformat b4p_sw_RebelModelFileName6 "b4p_yoda"
+
+
+    //////////////////////////////////////
+    // trig stuff
+    //////////////////////////////////////
+
+    // a temporary variable used to convert from coordinate systems
+    es_xsetinfo b4p_sw_tempVar 0.0
+
+    // the player's location
+    es_xsetinfo b4p_sw_playerX 0.0
+    es_xsetinfo b4p_sw_playerY 0.0
+    es_xsetinfo b4p_sw_playerZ 0.0
+
+    // the length of the laser before moving the origin.  used to find b4p_phi.
+    // it's our initial radius in polar coordinates
+    es_xsetinfo b4p_sw_laserLength 0.0
+
+    // the difference in location between the two points of the laser line before calculations
+    es_xsetinfo b4p_sw_offsetX 0.0
+    es_xsetinfo b4p_sw_offsetY 0.0
+    es_xsetinfo b4p_sw_offsetZ 0.0
+
+    // the above values squared
+    es_xsetinfo b4p_sw_offsetXsqr 0.0
+    es_xsetinfo b4p_sw_offsetYsqr 0.0
+    es_xsetinfo b4p_sw_offsetZsqr 0.0
+
+    // the length of the laser's XY projection, or sqrt[b4p_offsetXsqr + b4p_offsetYsqr]
+    es_xsetinfo b4p_sw_offsetXY 0.0
+
+    // used to represent polar coordinates.
+    // the first radius used is b4p_sw_laserLength
+    // the new radius used is b4p_sw_lasers_forwardOffset
+    es_xsetinfo b4p_sw_theta 0.0
+    es_xsetinfo b4p_sw_phi 0.0
+
+    // the distance the origin should move after making calculations
+    es_xsetinfo b4p_sw_deltaX 0.0
+    es_xsetinfo b4p_sw_deltaY 0.0
+    es_xsetinfo b4p_sw_deltaZ 0.0
+
+
+    //////////////////////////////////////
+    // Misc
+    //////////////////////////////////////
+
+    // to be consistent across all servers, DO NOT MODIFY THIS TEAM NUMBER on public servers!
+    es_xsetinfo b4p_sw_empireTeamNumber 3
+    // 2 (terrorist) / 3 (counter-terrorist)
+   
+    es_xsetinfo b4p_sw_randNum 0
+    es_xsetinfo b4p_sw_teamNumber 0
+    es_xsetinfo b4p_sw_randPlayer 0
+    es_xsetinfo b4p_sw_playerName 0
+    es_xsetinfo b4p_sw_weapon_was_fired 0
+    es_xsetinfo b4p_sw_modelName 0
+    es_xsetinfo b4p_sw_modelPath 0
+    es_xsetinfo chee_gravity 0
+    es_xsetinfo b4p_sw_tempUserIds 0
+    es_xkeygroupdelete b4p_sw_key
+    es_xkeygroupcreate b4p_sw_key
+    es_xregcmd setTeamStormTroopers b4p_starwars/setTeamStormTroopers
+    es_xregcmd setTeamRebels b4p_starwars/setTeamRebels
+    es_xregcmd enableBobaJets b4p_starwars/enableBobaJets
+    es_xload popup
+    es_xdoblock b4p_starwars/SetUp
+    mp_restartgame 1
+    es_xdoblock corelib/noisy_on
+    if (server_var(eventscripts_noisy) < 1) then es_xset eventscripts_noisy 1
+}
+
+block unload
+{
+    es_xdoblock corelib/noisy_off
+    es_xkeygroupdelete b4p_sw_key
+}
+
+event es_map_start
+{
+    es_xdoblock b4p_starwars/SetUp
+    es_xdoblock b4p_starwars/SetZup
+}
+
+event round_start
+{
+    if (server_var(eventscripts_noisy) < 1) then es_xset eventscripts_noisy 1 // if noisy somehow got turned off while script ran, put it back on..
+    es_xsetinfo b4p_sw_bombBeginPlant 0
+    if (server_var(b4p_sw_classicModeEnabled) == 0) then es_xmsg #multi #green [StarWars] #lightgreen type #greenswmenu#lightgreen for the character menu
+    if (server_var(b4p_sw_jediModeEnabled) == 1) do
+    {
+        es_xsetinfo b4p_sw_randPlayer 0
+        if (server_var(b4p_sw_empireTeamNumber) == 3) then getrandplayer b4p_sw_randPlayer #ct
+        if (server_var(b4p_sw_empireTeamNumber) == 2) then getrandplayer b4p_sw_randPlayer #t
+        if (server_var(b4p_sw_randPlayer) != 0) do
+        {
+            es_format b4p_sw_modelPath "%1/b4p_vader/b4p_vader" server_var(b4p_sw_modelHome)
+            es playerset model server_var(b4p_sw_randPlayer) server_var(b4p_sw_modelPath)
+            es_keysetvalue b4p_sw_key server_var(b4p_sw_randPlayer) b4p_sw_key_tempModelName "b4p_vader"
+            es_xformatv chee_gravity "gravity %1" b4p_sw_normalGravity
+            es_fire server_var(b4p_sw_randPlayer) !self addoutput server_var(chee_gravity)
+            es_xformatv chee_gravity "gravity %1" b4p_sw_normalGravity
+            es_fire server_var(b4p_sw_randPlayer) !self addoutput server_var(chee_gravity)
+            es_getplayername b4p_sw_playerName server_var(b4p_sw_randPlayer)
+            es_msg #multi #green server_var(b4p_sw_playerName) #lightgreen has spawned as #default Vader
+        }
+        es_xsetinfo b4p_sw_randPlayer 0
+        if (server_var(b4p_sw_empireTeamNumber) == 2) then getrandplayer b4p_sw_randPlayer #ct
+        if (server_var(b4p_sw_empireTeamNumber) == 3) then getrandplayer b4p_sw_randPlayer #t
+        if (server_var(b4p_sw_randPlayer) != 0) do
+        {
+            es_format b4p_sw_modelPath "%1/b4p_yoda/b4p_yoda" server_var(b4p_sw_modelHome)
+            es playerset model server_var(b4p_sw_randPlayer) server_var(b4p_sw_modelPath)
+            es_keysetvalue b4p_sw_key server_var(b4p_sw_randPlayer) b4p_sw_key_tempModelName "b4p_yoda"
+            es_xformatv chee_gravity "gravity %1" b4p_sw_normalGravity
+            es_fire server_var(b4p_sw_randPlayer) !self addoutput server_var(chee_gravity)
+            es_getplayername b4p_sw_playerName server_var(b4p_sw_randPlayer)
+            es_msg #multi #green server_var(b4p_sw_playerName) #lightgreen has spawned as #default Yoda
+        }
+    }
+}
+
+event player_activate
+{
+    es_keycreate b4p_sw_key event_var(userid)
+    es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelMenuActive 0
+    es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName 0
+}
+
+event player_spawn
+{
+    es_xsetinfo b4p_sw_keytest 0
+    es_xexists b4p_sw_keytest key b4p_sw_key
+    if (server_var(b4p_sw_keytest) == 0) then es_keycreate b4p_sw_key event_var(userid)
+    es_xformatv chee_gravity "gravity %1" b4p_sw_normalGravity
+    es_fire event_var(userid) !self addoutput server_var(chee_gravity)
+    if (server_var(b4p_sw_classicModeEnabled) == 0) do
+    {
+        es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_teamNumber event_var(es_userteam)
+        es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_modelName
+        es_format b4p_sw_modelPath "%1/%2/%2" server_var(b4p_sw_modelHome) server_var(b4p_sw_modelName)
+        if (server_var(b4p_sw_modelName) == 0) then es_xdoblock b4p_starwars/randomModel
+        es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_modelName
+        es_format b4p_sw_modelPath "%1/%2/%2" server_var(b4p_sw_modelHome) server_var(b4p_sw_modelName)
+        if (server_var(b4p_sw_modelName) != 0) then es playerset model event_var(userid) server_var(b4p_sw_modelPath)
+        es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_modelName
+        es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_tempModelName server_var(b4p_sw_modelName)
+    }
+    if (server_var(b4p_sw_classicModeEnabled) == 1) do
+    {
+        if (event_var(es_userteam) == server_var(b4p_sw_empireTeamNumber)) do
+        {
+            es_format b4p_sw_modelPath "%1/b4p_stormt/b4p_stormt" server_var(b4p_sw_modelHome)
+            es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_tempModelName "b4p_stormt"
+        }
+        if (event_var(es_userteam) != server_var(b4p_sw_empireTeamNumber)) do
+        {
+            es_format b4p_sw_modelPath "%1/b4p_rebel/b4p_rebel" server_var(b4p_sw_modelHome)
+            es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_tempModelName "b4p_rebel"
+        }
+        es playerset model event_var(userid) server_var(b4p_sw_modelPath)
+    }
+    if (server_var(b4p_sw_classicModeEnabled) == 0) do
+    {
+        if (server_var(b4p_sw_bobaJetsEnabled) == 1) do
+        {
+            if (server_var(b4p_sw_modelName) == "b4p_bobafett") do
+            {
+                es_xformatv chee_gravity "gravity %1" b4p_sw_bobaFettGravity
+                es_fire event_var(userid) !self addoutput server_var(chee_gravity)
+            }
+        }
+    }
+}
+
+event player_team
+{
+    es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_teamNumber event_var(team)
+    es_xdoblock b4p_starwars/randomModel
+}
+
+event player_jump
+{
+    es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_tempModelName
+    if (server_var(b4p_sw_bobaJetsEnabled) == 1) do
+    {
+        if (server_var(b4p_sw_modelName) == "b4p_bobafett") do
+        {
+            es_emitsound player event_var(userid) "b4p/weapons/boba/bf_flame.mp3" 1.0 0.
+        }
+    }
+}
+
+event weapon_fire
+{
+    es_xsetinfo b4p_sw_weapon_was_fired 1
+    es_getplayerlocation b4p_sw_playerX b4p_sw_playerY b4p_sw_playerZ event_var(userid)
+    if (event_var(weapon) == knife) do
+    {
+        if (server_var(b4p_sw_weaponSoundsEnabled) == 1) then es_xdoblock b4p_starwars/playKnifeSound
+    }
+}
+
+event bomb_beginplant
+{
+    if (server_var(b4p_sw_charSoundsEnabled) == 1) do
+    {
+        es_xsetinfo b4p_sw_modelName 0
+        if (server_var(b4p_sw_bombBeginPlant) == 0) do
+        {
+            es_xsetinfo b4p_sw_bombBeginPlant 1
+            es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_tempModelName
+            if (server_var(b4p_sw_modelName) == "b4p_chewbacca") then es_emitsound player event_var(userid) "b4p/char/chewbacca/chewbacca1.wav" 1.0 0.5
+            if (server_var(b4p_sw_modelName) == "b4p_jawa") then es_emitsound player event_var(userid) "b4p/char/jawa/chatter2.mp3" 1.0 0.5
+            if (server_var(b4p_sw_modelName) == "b4p_tusken") then es_emitsound player event_var(userid) "b4p/char/tusken/confuse1.mp3" 1.0 0.5
+        }
+    }
+
+}
+
+event bomb_planted
+{
+    if (server_var(b4p_sw_charSoundsEnabled) == 1) do
+    {
+        es_xsetinfo b4p_sw_modelName 0
+        es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_tempModelName
+        if (server_var(b4p_sw_modelName) == "b4p_chewbacca") then es_emitsound player event_var(userid) "b4p/char/chewbacca/taunt.mp3" 1.0 0.5
+        if (server_var(b4p_sw_modelName) == "b4p_jawa") then es_emitsound player event_var(userid) "b4p/char/jawa/victory2.mp3" 1.0 0.5
+        if (server_var(b4p_sw_modelName) == "b4p_yoda") then es_emitsound player event_var(userid) "b4p/char/yoda/laugh1.wav" 1.0 0.5
+        if (server_var(b4p_sw_modelName) == "b4p_tusken") then es_emitsound player event_var(userid) "b4p/char/tusken/taunt.mp3" 1.0 0.5
+    }
+}
+
+event bomb_exploded
+{
+    if (server_var(b4p_sw_jabbaLaughEnabled) == 1) then es_delayed 1 es_cexec event_var(userid) playgamesound "b4p/char/jabba/laugh1.wav"
+}
+
+event player_death
+{
+    if (server_var(b4p_sw_charSoundsEnabled) == 1) do
+    {
+        es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_tempModelName
+        if (server_var(b4p_sw_modelName) == "b4p_jawa") do
+        {
+            es_xrand b4p_sw_randNum 1 3
+            if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(userid) "b4p/char/jawa/death1.mp3" 1.0 0.5
+            if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(userid) "b4p/char/jawa/death2.mp3" 1.0 0.5
+            if (server_var(b4p_sw_randNum) == 3) then es_emitsound player event_var(userid) "b4p/char/jawa/death3.mp3" 1.0 0.5
+
+        }
+        if (server_var(b4p_sw_modelName) == "b4p_chewbacca") do
+        {
+            es_xrand b4p_sw_randNum 1 3
+            if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(userid) "b4p/char/chewbacca/death1.mp3" 1.0 0.5
+            if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(userid) "b4p/char/chewbacca/death2.mp3" 1.0 0.5
+            if (server_var(b4p_sw_randNum) == 3) then es_emitsound player event_var(userid) "b4p/char/chewbacca/death3.mp3" 1.0 0.5
+        }
+        if (server_var(b4p_sw_modelName) == "b4p_tusken") do
+        {
+            es_xrand b4p_sw_randNum 1 2
+            if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(userid) "b4p/char/tusken/death1.mp3" 1.0 0.5
+            if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(userid) "b4p/char/tusken/death2.mp3" 1.0 0.5
+        }
+        if (event_var(headshot) == 1) do
+        {
+            es_xrand b4p_sw_randNum 1 10
+            if (server_var(b4p_sw_randNum) == 1) do
+            {
+                es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(attacker) b4p_sw_key_tempModelName
+                es_xrand b4p_sw_randNum 1 2
+                if (server_var(b4p_sw_modelName) == "b4p_jawa") do
+                {
+                    if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(attacker) "b4p/char/jawa/jawa1.wav" 1.0 0.5
+                    if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(attacker) "b4p/char/jawa/victory2.mp3" 1.0 0.5
+                }
+                if (server_var(b4p_sw_modelName) == "b4p_chewbacca") do
+                {
+                    if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(attacker) "b4p/char/chewbacca/taunt.mp3" 1.0 0.5
+                    if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(attacker) "b4p/char/chewbacca/victory1.mp3" 1.0 0.5
+                }
+                if (server_var(b4p_sw_modelName) == "b4p_yoda") do
+                {
+                    if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(attacker) "b4p/char/yoda/laugh1.wav" 1.0 0.5
+                    if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(attacker) "b4p/char/yoda/laugh2.wav" 1.0 0.5
+                }
+                if (server_var(b4p_sw_modelName) == "b4p_tusken") do
+                {
+                    if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(attacker) "b4p/char/yoda/anger1.mp3" 1.0 0.5
+                    if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(attacker) "b4p/char/yoda/anger2.mp3" 1.0 0.5
+                }
+            }
+        }
+    }
+}
+
+event bullet_impact
+{
+    if (server_var(b4p_sw_weapon_was_fired) == 1) do
+    {
+        if (server_var(b4p_sw_weaponSoundsEnabled) == 1) then  es_xdoblock b4p_starwars/playWeaponFireSound
+    }
+    if (server_var(b4p_sw_lasers_enabled) == 1) do
+    {
+        if (server_var(b4p_sw_lasers_trigEnabled) == 1) do
+        {
+            if (server_var(b4p_sw_weapon_was_fired) == 1) then es_xdoblock b4p_starwars/adjustLaserOrigin
+        }
+        es_xdoblock b4p_starwars/drawLasers
+    }
+    es_xsetinfo b4p_sw_weapon_was_fired 0
+}
+
+event player_disconnect
+{
+    es_keydelete b4p_sw_key event_var(userid)
+}
+
+block playWeaponFireSound
+{
+    es_xsetinfo b4p_sw_lightningSoundPlayed 0
+    es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_tempModelName
+    if (server_var(b4p_sw_modelName) == "b4p_vader") do
+    {
+        es_xrand b4p_sw_randNum 1 4
+        if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(userid) "b4p/weapons/force/lightning.mp3" 1.0 0.5
+        if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(userid) "b4p/weapons/force/lightninghit1.mp3" 1.0 0.5
+        if (server_var(b4p_sw_randNum) == 3) then es_emitsound player event_var(userid) "b4p/weapons/force/lightninghit2.mp3" 1.0 0.5
+        if (server_var(b4p_sw_randNum) == 4) then es_emitsound player event_var(userid) "b4p/weapons/force/lightninghit3.mp3" 1.0 0.5
+        es_xsetinfo b4p_sw_lightningSoundPlayed 1
+    }
+    if (server_var(b4p_sw_modelName) == "b4p_yoda") do
+    {
+        es_xrand b4p_sw_randNum 1 4
+        if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(userid) "b4p/weapons/force/lightning.mp3" 1.0 0.5
+        if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(userid) "b4p/weapons/force/lightninghit1.mp3" 1.0 0.5
+        if (server_var(b4p_sw_randNum) == 3) then es_emitsound player event_var(userid) "b4p/weapons/force/lightninghit2.mp3" 1.0 0.5
+        if (server_var(b4p_sw_randNum) == 4) then es_emitsound player event_var(userid) "b4p/weapons/force/lightninghit3.mp3" 1.0 0.5
+        es_xsetinfo b4p_sw_lightningSoundPlayed 1
+    }
+    if (server_var(b4p_sw_lightningSoundPlayed) != 1) do
+    {
+        es_xrand b4p_sw_randNum 1 2
+        if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(userid) "b4p/weapons/blaster/fire.mp3" 1.0 0.5
+        if (server_var(b4p_sw_randNum) != 1) then es_emitsound player event_var(userid) "b4p/weapons/blaster/alt_fire.mp3" 1.0 0.5
+    }
+}
+
+block SetUp
+{
+    es_xsetinfo b4p_starwars_mod_version "v1.1.1 By B4P - Fixed by CheeTaH (2011-05MAY-08TH 17:20)"
+    es_xmakepublic b4p_starwars_mod_version
+    echo "B4P StarWars: Making Models Downloadable"
+    downloadable "sound/b4p/weapons/blaster/alt_fire.mp3"
+    downloadable "sound/b4p/weapons/blaster/fire.mp3"
+    downloadable "sound/b4p/weapons/saber/saberhup1.mp3"
+    downloadable "sound/b4p/weapons/saber/saberhup2.mp3"
+    downloadable "sound/b4p/weapons/saber/saberhup3.mp3"
+    downloadable "sound/b4p/weapons/saber/saberhup4.mp3"
+    downloadable "sound/b4p/weapons/boba/bf_flame.mp3"
+    downloadable "sound/b4p/weapons/force/lightning.mp3"
+    downloadable "sound/b4p/weapons/force/lightninghit1.mp3"
+    downloadable "sound/b4p/weapons/force/lightninghit2.mp3"
+    downloadable "sound/b4p/weapons/force/lightninghit3.mp3"
+    downloadable "sound/b4p/char/chewbacca/chewbacca1.wav"
+    downloadable "sound/b4p/char/chewbacca/death1.mp3"
+    downloadable "sound/b4p/char/chewbacca/death2.mp3"
+    downloadable "sound/b4p/char/chewbacca/death3.mp3"
+    downloadable "sound/b4p/char/chewbacca/taunt.mp3"
+    downloadable "sound/b4p/char/chewbacca/victory1.mp3"
+    downloadable "sound/b4p/char/jawa/chatter2.mp3"
+    downloadable "sound/b4p/char/jawa/death1.mp3"
+    downloadable "sound/b4p/char/jawa/death2.mp3"
+    downloadable "sound/b4p/char/jawa/death3.mp3"
+    downloadable "sound/b4p/char/jawa/jawa1.wav"
+    downloadable "sound/b4p/char/jawa/victory1.mp3"
+    downloadable "sound/b4p/char/jawa/victory2.mp3"
+    downloadable "sound/b4p/char/tusken/anger1.mp3"
+    downloadable "sound/b4p/char/tusken/anger2.mp3"
+    downloadable "sound/b4p/char/tusken/confuse1.mp3"
+    downloadable "sound/b4p/char/tusken/death1.mp3"
+    downloadable "sound/b4p/char/tusken/death2.mp3"
+    downloadable "sound/b4p/char/tusken/taunt.mp3"
+    downloadable "sound/b4p/char/yoda/laugh1.wav"
+    downloadable "sound/b4p/char/yoda/laugh2.wav"
+    downloadable "sound/b4p/char/jabba/laugh1.wav"
+    downloadable "materials/models/player/b4p/bobafett/boba_body.vmt"
+    downloadable "materials/models/player/b4p/bobafett/boba_body.vtf"
+    downloadable "materials/models/player/b4p/bobafett/boba_hands.vmt"
+    downloadable "materials/models/player/b4p/bobafett/boba_hands.vtf"
+    downloadable "materials/models/player/b4p/bobafett/boba_head_revised.vmt"
+    downloadable "materials/models/player/b4p/bobafett/boba_head_revised.vtf"
+    downloadable "materials/models/player/b4p/bobafett/boba_jetpack.vmt"
+    downloadable "materials/models/player/b4p/bobafett/boba_jetpack.vtf"
+    downloadable "materials/models/player/b4p/c3po/c3po_arm_torso.vmt"
+    downloadable "materials/models/player/b4p/c3po/c3po_arm_torso.vtf"
+    downloadable "materials/models/player/b4p/c3po/c3po_face.vmt"
+    downloadable "materials/models/player/b4p/c3po/c3po_face.vtf"
+    downloadable "materials/models/player/b4p/c3po/c3po_hand.vmt"
+    downloadable "materials/models/player/b4p/c3po/c3po_hand.vtf"
+    downloadable "materials/models/player/b4p/c3po/c3po_leg.vmt"
+    downloadable "materials/models/player/b4p/c3po/c3po_leg.vtf"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_1sided.vmt"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_1sided.vtf"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_2sided.vmt"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_2sided.vtf"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_body.vmt"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_body.vtf"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_head.vmt"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_head.vtf"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_sprites.vmt"
+    downloadable "materials/models/player/b4p/chewbacca/chewbacca_sprites.vtf"
+    downloadable "materials/models/player/b4p/imperial/basic_hand.vmt"
+    downloadable "materials/models/player/b4p/imperial/basic_hand.vtf"
+    downloadable "materials/models/player/b4p/imperial/boots_hips.vmt"
+    downloadable "materials/models/player/b4p/imperial/boots_hips.vtf"
+    downloadable "materials/models/player/b4p/imperial/face.vmt"
+    downloadable "materials/models/player/b4p/imperial/face.vtf"
+    downloadable "materials/models/player/b4p/imperial/head.vmt"
+    downloadable "materials/models/player/b4p/imperial/head.vtf"
+    downloadable "materials/models/player/b4p/imperial/mouth_eyes.vmt"
+    downloadable "materials/models/player/b4p/imperial/mouth_eyes.vtf"
+    downloadable "materials/models/player/b4p/imperial/officer_legs.vmt"
+    downloadable "materials/models/player/b4p/imperial/officer_legs.vtf"
+    downloadable "materials/models/player/b4p/imperial/officer_torso.vmt"
+    downloadable "materials/models/player/b4p/imperial/officer_torso.vtf"
+    downloadable "materials/models/player/b4p/jawa/jawa.vmt"
+    downloadable "materials/models/player/b4p/jawa/jawa.vtf"
+    downloadable "materials/models/player/b4p/jawa/jawa_eyes.vmt"
+    downloadable "materials/models/player/b4p/jawa/jawa_eyes.vtf"
+    downloadable "materials/models/player/b4p/jawa/jawa_hands.vmt"
+    downloadable "materials/models/player/b4p/jawa/jawa_hands.vtf"
+    downloadable "materials/models/player/b4p/rebel/accessories.vmt"
+    downloadable "materials/models/player/b4p/rebel/accessories.vtf"
+    downloadable "materials/models/player/b4p/rebel/basic_hand.vmt"
+    downloadable "materials/models/player/b4p/rebel/basic_hand.vtf"
+    downloadable "materials/models/player/b4p/rebel/face_01.vmt"
+    downloadable "materials/models/player/b4p/rebel/face_01.vtf"
+    downloadable "materials/models/player/b4p/rebel/head_01.vmt"
+    downloadable "materials/models/player/b4p/rebel/head_01.vtf"
+    downloadable "materials/models/player/b4p/rebel/mouth_eyes.vmt"
+    downloadable "materials/models/player/b4p/rebel/mouth_eyes.vtf"
+    downloadable "materials/models/player/b4p/rebel/rebel_boots.vmt"
+    downloadable "materials/models/player/b4p/rebel/rebel_boots.vtf"
+    downloadable "materials/models/player/b4p/rebel/rebel_legs.vmt"
+    downloadable "materials/models/player/b4p/rebel/rebel_legs.vtf"
+    downloadable "materials/models/player/b4p/rebel/rebel_torso.vmt"
+    downloadable "materials/models/player/b4p/rebel/rebel_torso.vtf"
+    downloadable "materials/models/player/b4p/rodian/basic_hand.vmt"
+    downloadable "materials/models/player/b4p/rodian/basic_hand.vtf"
+    downloadable "materials/models/player/b4p/rodian/boots_belt_vest.vmt"
+    downloadable "materials/models/player/b4p/rodian/boots_belt_vest.vtf"
+    downloadable "materials/models/player/b4p/rodian/fins.vmt"
+    downloadable "materials/models/player/b4p/rodian/fins.vtf"
+    downloadable "materials/models/player/b4p/rodian/head.vmt"
+    downloadable "materials/models/player/b4p/rodian/head.vtf"
+    downloadable "materials/models/player/b4p/rodian/l_boot.vmt"
+    downloadable "materials/models/player/b4p/rodian/l_boot.vtf"
+    downloadable "materials/models/player/b4p/rodian/l_leg.vmt"
+    downloadable "materials/models/player/b4p/rodian/l_leg.vtf"
+    downloadable "materials/models/player/b4p/rodian/torso.vmt"
+    downloadable "materials/models/player/b4p/rodian/torso.vtf"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_armor.vmt"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_armor.vtf"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_cape.vmt"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_cape.vtf"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_hands.vmt"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_hands.vtf"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_legs.vmt"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_legs.vtf"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_torso.vmt"
+    downloadable "materials/models/player/b4p/snowtrooper/snowtrooper_torso.vtf"
+    downloadable "materials/models/player/b4p/stormt/armor.vmt"
+    downloadable "materials/models/player/b4p/stormt/armor.vtf"
+    downloadable "materials/models/player/b4p/stormt/helmet.vmt"
+    downloadable "materials/models/player/b4p/stormt/helmet.vtf"
+    downloadable "materials/models/player/b4p/stormt/shoulder.vmt"
+    downloadable "materials/models/player/b4p/stormt/shoulder.vtf"
+    downloadable "materials/models/player/b4p/stormt/torso_legs.vmt"
+    downloadable "materials/models/player/b4p/stormt/torso_legs.vtf"
+    downloadable "materials/models/player/b4p/tusken/body.vmt"
+    downloadable "materials/models/player/b4p/tusken/body.vtf"
+    downloadable "materials/models/player/b4p/tusken/face.vmt"
+    downloadable "materials/models/player/b4p/tusken/face.vtf"
+    downloadable "materials/models/player/b4p/tusken/hands.vmt"
+    downloadable "materials/models/player/b4p/tusken/hands.vtf"
+    downloadable "materials/models/player/b4p/tusken/head.vmt"
+    downloadable "materials/models/player/b4p/tusken/head.vtf"
+    downloadable "materials/models/player/b4p/tusken/pockets.vmt"
+    downloadable "materials/models/player/b4p/tusken/pockets.vtf"
+    downloadable "materials/models/player/b4p/vader/alnewhope.vmt"
+    downloadable "materials/models/player/b4p/vader/alnewhope.vtf"
+    downloadable "materials/models/player/b4p/vader/beltxtras.vmt"
+    downloadable "materials/models/player/b4p/vader/beltxtras.vtf"
+    downloadable "materials/models/player/b4p/vader/darthshing.vmt"
+    downloadable "materials/models/player/b4p/vader/darthshing.vtf"
+    downloadable "materials/models/player/b4p/vader/dbreather.vmt"
+    downloadable "materials/models/player/b4p/vader/dbreather.vtf"
+    downloadable "materials/models/player/b4p/vader/dcape.vmt"
+    downloadable "materials/models/player/b4p/vader/dcape.vtf"
+    downloadable "materials/models/player/b4p/vader/handhope.vmt"
+    downloadable "materials/models/player/b4p/vader/handhope.vtf"
+    downloadable "materials/models/player/b4p/vader/headhope.vmt"
+    downloadable "materials/models/player/b4p/vader/headhope.vtf"
+    downloadable "materials/models/player/b4p/vader/helmethope.vmt"
+    downloadable "materials/models/player/b4p/vader/helmethope.vtf"
+    downloadable "materials/models/player/b4p/vader/hipsvader.vmt"
+    downloadable "materials/models/player/b4p/vader/hipsvader.vtf"
+    downloadable "materials/models/player/b4p/vader/legsvader.vmt"
+    downloadable "materials/models/player/b4p/vader/legsvader.vtf"
+    downloadable "materials/models/player/b4p/vader/shoulderhope.vmt"
+    downloadable "materials/models/player/b4p/vader/shoulderhope.vtf"
+    downloadable "materials/models/player/b4p/vader/torsovader.vmt"
+    downloadable "materials/models/player/b4p/vader/torsovader.vtf"
+    downloadable "materials/models/player/b4p/vader/vaderface.vmt"
+    downloadable "materials/models/player/b4p/vader/vaderface.vtf"
+    downloadable "materials/models/player/b4p/yoda/yoda_body.vmt"
+    downloadable "materials/models/player/b4p/yoda/yoda_body.vtf"
+    downloadable "materials/models/player/b4p/yoda/yoda_body_normal.vtf"
+    downloadable "materials/models/player/b4p/yoda/yoda_head.vmt"
+    downloadable "materials/models/player/b4p/yoda/yoda_head.vtf"
+    downloadable "materials/models/player/b4p/yoda/yoda_head_normal.vtf"
+    downloadable "models/player/b4p/b4p_bobafett/b4p_bobafett.dx80.vtx"
+    downloadable "models/player/b4p/b4p_bobafett/b4p_bobafett.dx90.vtx"
+    downloadable "models/player/b4p/b4p_bobafett/b4p_bobafett.mdl"
+    downloadable "models/player/b4p/b4p_bobafett/b4p_bobafett.phy"
+    downloadable "models/player/b4p/b4p_bobafett/b4p_bobafett.sw.vtx"
+    downloadable "models/player/b4p/b4p_bobafett/b4p_bobafett.vvd"
+    downloadable "models/player/b4p/b4p_c3po/b4p_c3po.dx80.vtx"
+    downloadable "models/player/b4p/b4p_c3po/b4p_c3po.dx90.vtx"
+    downloadable "models/player/b4p/b4p_c3po/b4p_c3po.mdl"
+    downloadable "models/player/b4p/b4p_c3po/b4p_c3po.phy"
+    downloadable "models/player/b4p/b4p_c3po/b4p_c3po.sw.vtx"
+    downloadable "models/player/b4p/b4p_c3po/b4p_c3po.vvd"
+    downloadable "models/player/b4p/b4p_chewbacca/b4p_chewbacca.dx80.vtx"
+    downloadable "models/player/b4p/b4p_chewbacca/b4p_chewbacca.dx90.vtx"
+    downloadable "models/player/b4p/b4p_chewbacca/b4p_chewbacca.mdl"
+    downloadable "models/player/b4p/b4p_chewbacca/b4p_chewbacca.phy"
+    downloadable "models/player/b4p/b4p_chewbacca/b4p_chewbacca.sw.vtx"
+    downloadable "models/player/b4p/b4p_chewbacca/b4p_chewbacca.vvd"
+    downloadable "models/player/b4p/b4p_imperial/b4p_imperial.dx80.vtx"
+    downloadable "models/player/b4p/b4p_imperial/b4p_imperial.dx90.vtx"
+    downloadable "models/player/b4p/b4p_imperial/b4p_imperial.mdl"
+    downloadable "models/player/b4p/b4p_imperial/b4p_imperial.phy"
+    downloadable "models/player/b4p/b4p_imperial/b4p_imperial.sw.vtx"
+    downloadable "models/player/b4p/b4p_imperial/b4p_imperial.vvd"
+    downloadable "models/player/b4p/b4p_jawa/b4p_jawa.dx80.vtx"
+    downloadable "models/player/b4p/b4p_jawa/b4p_jawa.dx90.vtx"
+    downloadable "models/player/b4p/b4p_jawa/b4p_jawa.mdl"
+    downloadable "models/player/b4p/b4p_jawa/b4p_jawa.phy"
+    downloadable "models/player/b4p/b4p_jawa/b4p_jawa.sw.vtx"
+    downloadable "models/player/b4p/b4p_jawa/b4p_jawa.vvd"
+    downloadable "models/player/b4p/b4p_rebel/b4p_rebel.dx80.vtx"
+    downloadable "models/player/b4p/b4p_rebel/b4p_rebel.dx90.vtx"
+    downloadable "models/player/b4p/b4p_rebel/b4p_rebel.mdl"
+    downloadable "models/player/b4p/b4p_rebel/b4p_rebel.phy"
+    downloadable "models/player/b4p/b4p_rebel/b4p_rebel.sw.vtx"
+    downloadable "models/player/b4p/b4p_rebel/b4p_rebel.vvd"
+    downloadable "models/player/b4p/b4p_rodian/b4p_rodian.dx80.vtx"
+    downloadable "models/player/b4p/b4p_rodian/b4p_rodian.dx90.vtx"
+    downloadable "models/player/b4p/b4p_rodian/b4p_rodian.mdl"
+    downloadable "models/player/b4p/b4p_rodian/b4p_rodian.phy"
+    downloadable "models/player/b4p/b4p_rodian/b4p_rodian.sw.vtx"
+    downloadable "models/player/b4p/b4p_rodian/b4p_rodian.vvd"
+    downloadable "models/player/b4p/b4p_snowtrooper/b4p_snowtrooper.dx80.vtx"
+    downloadable "models/player/b4p/b4p_snowtrooper/b4p_snowtrooper.dx90.vtx"
+    downloadable "models/player/b4p/b4p_snowtrooper/b4p_snowtrooper.mdl"
+    downloadable "models/player/b4p/b4p_snowtrooper/b4p_snowtrooper.phy"
+    downloadable "models/player/b4p/b4p_snowtrooper/b4p_snowtrooper.sw.vtx"
+    downloadable "models/player/b4p/b4p_snowtrooper/b4p_snowtrooper.vvd"
+    downloadable "models/player/b4p/b4p_stormt/b4p_stormt.dx80.vtx"
+    downloadable "models/player/b4p/b4p_stormt/b4p_stormt.dx90.vtx"
+    downloadable "models/player/b4p/b4p_stormt/b4p_stormt.mdl"
+    downloadable "models/player/b4p/b4p_stormt/b4p_stormt.phy"
+    downloadable "models/player/b4p/b4p_stormt/b4p_stormt.sw.vtx"
+    downloadable "models/player/b4p/b4p_stormt/b4p_stormt.vvd"
+    downloadable "models/player/b4p/b4p_tusken/b4p_tusken.dx80.vtx"
+    downloadable "models/player/b4p/b4p_tusken/b4p_tusken.dx90.vtx"
+    downloadable "models/player/b4p/b4p_tusken/b4p_tusken.mdl"
+    downloadable "models/player/b4p/b4p_tusken/b4p_tusken.phy"
+    downloadable "models/player/b4p/b4p_tusken/b4p_tusken.sw.vtx"
+    downloadable "models/player/b4p/b4p_tusken/b4p_tusken.vvd"
+    downloadable "models/player/b4p/b4p_vader/b4p_vader.dx80.vtx"
+    downloadable "models/player/b4p/b4p_vader/b4p_vader.dx90.vtx"
+    downloadable "models/player/b4p/b4p_vader/b4p_vader.mdl"
+    downloadable "models/player/b4p/b4p_vader/b4p_vader.phy"
+    downloadable "models/player/b4p/b4p_vader/b4p_vader.sw.vtx"
+    downloadable "models/player/b4p/b4p_vader/b4p_vader.vvd"
+    downloadable "models/player/b4p/b4p_yoda/b4p_yoda.dx80.vtx"
+    downloadable "models/player/b4p/b4p_yoda/b4p_yoda.dx90.vtx"
+    downloadable "models/player/b4p/b4p_yoda/b4p_yoda.mdl"
+    downloadable "models/player/b4p/b4p_yoda/b4p_yoda.phy"
+    downloadable "models/player/b4p/b4p_yoda/b4p_yoda.sw.vtx"
+    downloadable "models/player/b4p/b4p_yoda/b4p_yoda.vvd"
+}
+
+block SetZup
+{
+    es_xmakepublic b4p_starwars_mod_version
+    es_xprecachemodel models/player/b4p/b4p_bobafett/b4p_bobafett.mdl
+    es_xprecachemodel models/player/b4p/b4p_c3po/b4p_c3po.mdl
+    es_xprecachemodel models/player/b4p/b4p_chewbacca/b4p_chewbacca.mdl
+    es_xprecachemodel models/player/b4p/b4p_imperial/b4p_imperial.mdl
+    es_xprecachemodel models/player/b4p/b4p_jawa/b4p_jawa.mdl
+    es_xprecachemodel models/player/b4p/b4p_rebel/b4p_rebel.mdl
+    es_xprecachemodel models/player/b4p/b4p_rodian/b4p_rodian.mdl
+    es_xprecachemodel models/player/b4p/b4p_snowtrooper/b4p_snowtrooper.mdl
+    es_xprecachemodel models/player/b4p/b4p_stormt/b4p_stormt.mdl
+    es_xprecachemodel models/player/b4p/b4p_tusken/b4p_tusken.mdl
+    es_xprecachemodel models/player/b4p/b4p_vader/b4p_vader.mdl
+    es_xprecachemodel models/player/b4p/b4p_yoda/b4p_yoda.mdl
+}
+
+block playKnifeSound
+{
+    es_xrand b4p_sw_randNum 1 4
+    if (server_var(b4p_sw_randNum) == 1) then es_emitsound player event_var(userid) "b4p/weapons/saber/saberhup1.mp3" 1.0 0.5
+    if (server_var(b4p_sw_randNum) == 2) then es_emitsound player event_var(userid) "b4p/weapons/saber/saberhup2.mp3" 1.0 0.5
+    if (server_var(b4p_sw_randNum) == 3) then es_emitsound player event_var(userid) "b4p/weapons/saber/saberhup3.mp3" 1.0 0.5
+    if (server_var(b4p_sw_randNum) == 4) then es_emitsound player event_var(userid) "b4p/weapons/saber/saberhup4.mp3" 1.0 0.5
+}
+
+block randomModel
+{
+    es_getplayerteam b4p_sw_teamNumber event_var(userid)
+    es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_modelName
+    if (server_var(b4p_sw_teamNumber) == server_var(b4p_sw_empireTeamNumber)) then es_xrand b4p_sw_randNum 1 server_var(b4p_sw_empireModelCount)
+    if (server_var(b4p_sw_teamNumber) != server_var(b4p_sw_empireTeamNumber)) then es_xrand b4p_sw_randNum 1 server_var(b4p_sw_rebelModelCount)
+    es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName 0
+    if (server_var(b4p_sw_teamNumber) != server_var(b4p_sw_empireTeamNumber)) do
+    {
+        if (server_var(b4p_sw_randNum) == 1) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName1)
+        if (server_var(b4p_sw_randNum) == 2) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName2)
+        if (server_var(b4p_sw_randNum) == 3) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName3)
+        if (server_var(b4p_sw_randNum) == 4) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName4)
+        if (server_var(b4p_sw_randNum) == 5) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName5)
+    }
+    if (server_var(b4p_sw_teamNumber) == server_var(b4p_sw_empireTeamNumber)) do
+    {
+        if (server_var(b4p_sw_randNum) == 1) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName1)
+        if (server_var(b4p_sw_randNum) == 2) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName2)
+        if (server_var(b4p_sw_randNum) == 3) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName3)
+        if (server_var(b4p_sw_randNum) == 4) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName4)
+        if (server_var(b4p_sw_randNum) == 5) then es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName5)
+    }
+}
+
+block adjustLaserOrigin
+{
+    if (server_var(b4p_sw_weapon_was_fired) == 1) do
+    {
+        es_xset ducking 0
+        es_getplayerprop ducking event_var(userid) "CBasePlayer.localdata.m_Local.m_bDucked"
+        if (server_var(ducking) != 0) do
+        {
+            es_xmath b4p_sw_playerZ - 20
+        }
+        
+        es_xmath b4p_sw_playerZ + 59
+        es_xset _1 0
+        es_xset _2 0
+        es_xset _3 0
+        es playerget viewangle event_var(userid) _1 _2 _3
+        es_xset _4 40
+        if (server_var(_2) > 135) then if (server_var(_2) < 225) then es_math b4p_sw_playerX - server_var(_4) // around 180
+        if (server_var(_2) > 315) then es_math b4p_sw_playerX + server_var(_4) // around 0/360
+        if (server_var(_2) < 45) then es_math b4p_sw_playerX + server_var(_4) // around 0/360
+        if (server_var(_2) > 44.999) then if (server_var(_2) < 134.999) then es_math b4p_sw_playerY + server_var(_4) // around 90
+        if (server_var(_2) > 224.999) then if (server_var(_2) < 314.999) then es_math b4p_sw_playerY - server_var(_4) // around 270
+    }
+}
+
+block drawLasers
+{
+    es_xset v1 0
+    es_xset v2 0
+    es_xset tracer 0
+    es_createvectorstring v1 event_var(x) event_var(y) event_var(z)
+    es_createvectorstring v2 server_var(b4p_sw_playerX) server_var(b4p_sw_playerY) server_var(b4p_sw_playerZ)
+    es_xprecachemodel tracer "effects/gunshiptracer.vmt"
+    if (server_var(b4p_sw_lasers_teamColorsEnabled) == 1) do
+    {
+        es_getplayerteam b4p_sw_teamNumber event_var(userid)
+        if (server_var(b4p_sw_teamNumber) == server_var(b4p_sw_empireTeamNumber)) do
+        {
+            es_effect beam server_var(v1) server_var(v2) server_var(tracer) 0 0 0.1 0.1 6 6 0 0 0 0 255 255 100
+        }
+        if (server_var(b4p_sw_teamNumber) != server_var(b4p_sw_empireTeamNumber)) do
+        {
+            es_effect beam server_var(v1) server_var(v2) server_var(tracer) 0 0 0.1 0.1 6 6 0 0 255 0 0 255 100
+        }
+    }
+    if (server_var(b4p_sw_lasers_teamColorsEnabled) == 0) do
+    {
+        es_effect beam server_var(v1) server_var(v2) server_var(tracer) 0 0 0.1 0.1 6 6 0 0 255 255 255 255 100
+    }
+}
+block help
+{
+    es es_cexec event_var(userid) clear
+    es es_cexec event_var(userid) showconsole
+    es es_cexec event_var(userid) echo   b4p's StarWars mod
+    es es_cexec event_var(userid) echo
+    es es_cexec event_var(userid) echo   About&#058; I really gotta put something here.
+    es es_cexec event_var(userid) echo
+    es es_cexec event_var(userid) echo
+}
+
+event player_say
+{
+    es_xsetinfo b4p_sw_playerIsAdmin 0
+    es_getplayerteam b4p_sw_teamNumber event_var(userid)
+    if (event_var(text) == swmenu) do
+    {
+        if (server_var(b4p_sw_classicModeEnabled) == 0) do
+        {
+            es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelMenuActive 1
+            es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_adminMenuActive 0
+            if (server_var(b4p_sw_teamNumber) == server_var(b4p_sw_empireTeamNumber)) then es_xdoblock b4p_starwars/empireMenuShow
+            if (server_var(b4p_sw_teamNumber) != server_var(b4p_sw_empireTeamNumber)) then es_xdoblock b4p_starwars/rebelMenuShow
+            if (server_var(b4p_sw_teamNumber) in "0, 1") then es_tell event_var(userid) Spectators are not allowed to access the StarWars menu.
+        }
+        if (server_var(b4p_sw_classicModeEnabled) == 1) then es_tell event_var(userid) The menu is not available in classic mode
+    }
+    if (event_var(text) == swadmin) do
+    {
+        if (event_var(es_steamid) in server_var(b4p_sw_admins)) then es_setinfo b4p_sw_playerIsAdmin 1
+        if (server_var(b4p_sw_playerIsAdmin) != 1) then es_tell event_var(userid) You are not an admin
+        if (server_var(b4p_sw_playerIsAdmin) == 1) do
+        {
+            es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelMenuActive 0
+            es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_adminMenuActive 1
+            es_xdoblock b4p_starwars/adminMenuShow
+        }
+    }
+    if (event_var(text) == swhelp) then es_xdoblock b4p_starwars/help
+}
+
+event es_client_command
+{
+    es_xsetinfo b4p_sw_modelMenuActive 0
+    es_xsetinfo b4p_sw_adminMenuActive 0
+    es_getplayerteam b4p_sw_teamNumber event_var(userid)
+    es_keygetvalue b4p_sw_modelMenuActive b4p_sw_key event_var(userid) b4p_sw_key_modelMenuActive
+    es_keygetvalue b4p_sw_adminMenuActive b4p_sw_key event_var(userid) b4p_sw_key_adminMenuActive
+    if (server_var(b4p_sw_modelMenuActive) == 1) do
+    {
+        es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelMenuActive 0
+        es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_adminMenuActive 0
+    }
+    if (server_var(b4p_sw_adminMenuActive) == 1) do
+    {
+        es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_modelMenuActive 0
+        es_keysetvalue b4p_sw_key event_var(userid) b4p_sw_key_adminMenuActive 0
+    }
+}
+
+block adminMenuShow
+{
+    es_xset exists_var 0
+    popup exists adminMenuShow_popup exists_var
+    if (server_var(exists_var) == 1) then popup delete adminMenuShow_popup
+   
+    popup create adminMenuShow_popup
+    popup addline adminMenuShow_popup "choose an option:"
+    if (server_var(b4p_sw_lasers_enabled) == 1) then popup addline adminMenuShow_popup "->1. disable lasers"
+    if (server_var(b4p_sw_lasers_enabled) != 1) then popup addline adminMenuShow_popup "->1. enable lasers"
+    if (server_var(b4p_sw_weaponSoundsEnabled) == 1) then popup addline adminMenuShow_popup "->2. disable weapon sounds"
+    if (server_var(b4p_sw_weaponSoundsEnabled) != 1) then popup addline adminMenuShow_popup "->2. enable weapon sounds"
+    if (server_var(b4p_sw_charSoundsEnabled) == 1) then popup addline adminMenuShow_popup "->3. disable character sounds"
+    if (server_var(b4p_sw_charSoundsEnabled) != 1) then popup addline adminMenuShow_popup "->3. enable character sounds"
+    if (server_var(b4p_sw_lasers_trigEnabled) == 1) then popup addline adminMenuShow_popup "->4. disable laser trig"
+    if (server_var(b4p_sw_lasers_trigEnabled) != 1) then popup addline adminMenuShow_popup "->4. enable laser trig"
+    if (server_var(b4p_sw_lasers_teamColorsEnabled) == 1) then popup addline adminMenuShow_popup "->5. disable team colors for lasers"
+    if (server_var(b4p_sw_lasers_teamColorsEnabled) != 1) then popup addline adminMenuShow_popup "->5. enable team colors for lasers"
+    if (server_var(phys_pushscale) == 1) then popup addline adminMenuShow_popup "->6. set phys_pushscale = 5000"
+    if (server_var(phys_pushscale) != 1) then popup addline adminMenuShow_popup "->6. set phys_pushscale = 1"
+    if (server_var(b4p_sw_jediModeEnabled) == 1) then popup addline adminMenuShow_popup "->7. disable jedi mode"
+    if (server_var(b4p_sw_jediModeEnabled) != 1) then popup addline adminMenuShow_popup "->7. enable jedi mode"
+    if (server_var(b4p_sw_bobaJetsEnabled) == 1) then popup addline adminMenuShow_popup "->8. disable boba fett's jets"
+    if (server_var(b4p_sw_bobaJetsEnabled) != 1) then popup addline adminMenuShow_popup "->8. enable boba fett's jets"
+    if (server_var(b4p_sw_classicModeEnabled) == 1) then popup addline adminMenuShow_popup "->9. disable classic mode"
+    if (server_var(b4p_sw_classicModeEnabled) != 1) then popup addline adminMenuShow_popup "->9. enable classic mode"
+    popup addline adminMenuShow_popup "0. Close"
+    popup menuselect adminMenuShow_popup b4p_starwars/adminMenuAction
+    es popup send adminMenuShow_popup event_var(userid)
+}
+
+block adminMenuAction
+{
+    if (server_var(_popup_choice) == 1) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(b4p_sw_lasers_enabled)
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo b4p_sw_lasers_enabled 0
+            es_xmsg lasers disabled
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo b4p_sw_lasers_enabled 1
+            es_xmsg lasers enabled
+        }
+    }
+    if (server_var(_popup_choice) == 2) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(b4p_sw_weaponSoundsEnabled)
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo b4p_sw_weaponSoundsEnabled 0
+            es_xmsg weapon sounds disabled
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo b4p_sw_weaponSoundsEnabled 1
+            es_xmsg weapon sounds enabled
+        }
+    }
+    if (server_var(_popup_choice) == 3) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(b4p_sw_charSoundsEnabled)
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo b4p_sw_charSoundsEnabled 0
+            es_xmsg character sounds disabled
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo b4p_sw_charSoundsEnabled 1
+            es_xmsg character sounds enabled
+        }
+    }
+    if (server_var(_popup_choice) == 4) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(b4p_sw_lasers_trigEnabled)
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo b4p_sw_lasers_trigEnabled 0
+            es_xmsg laser trig disabled
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo b4p_sw_lasers_trigEnabled 1
+            es_xmsg laser trig enabled
+        }
+    }
+    if (server_var(_popup_choice) == 5) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(b4p_sw_lasers_teamColorsEnabled)
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo b4p_sw_lasers_teamColorsEnabled 0
+            es_xmsg team colors for lasers disabled
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo b4p_sw_lasers_teamColorsEnabled 1
+            es_xmsg team colors for lasers enabled
+        }
+    }
+    if (server_var(_popup_choice) == 6) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(phys_pushscale)
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo phys_pushscale 5000
+            es_xmsg phys_pushscale changed to 5000
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo phys_pushscale 1
+            es_xmsg phys_pushscale changed to 1
+        }
+    }
+    if (server_var(_popup_choice) == 7) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(b4p_sw_jediModeEnabled)
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo b4p_sw_jediModeEnabled 0
+            es_xmsg jedi mode will be disabled next round
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo b4p_sw_jediModeEnabled 1
+            es_xmsg jedi mode will be enabled next round
+        }
+    }
+    if (server_var(_popup_choice) == 8) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(b4p_sw_bobaJetsEnabled)
+        es_xsetinfo b4p_sw_tempUserIds 0
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo b4p_sw_bobaJetsEnabled 0
+            es_xformatv chee_gravity "gravity %1" b4p_sw_normalGravity
+            foreach player b4p_sw_tempUserIds #all "es_fire server_var(b4p_sw_tempUserIds) !self addoutput server_var(chee_gravity)"
+            es_xmsg boba fett's jets disabled
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo b4p_sw_bobaJetsEnabled 1
+            foreach player b4p_sw_tempUserIds #all "es enableBobaJets server_var(b4p_sw_tempUserIds)"
+            es_xmsg boba fett's jets enabled
+        }
+    }
+    if (server_var(_popup_choice) == 9) do
+    {
+        es_setinfo b4p_sw_tempVar server_var(b4p_sw_classicModeEnabled)
+        es_xsetinfo b4p_sw_tempUserIds 0
+        if (server_var(b4p_sw_tempVar) == 1) do
+        {
+            es_xsetinfo b4p_sw_classicModeEnabled 0
+            es_xmsg classic mode will be disabled next round
+        }
+        if (server_var(b4p_sw_tempVar) != 1) do
+        {
+            es_xsetinfo b4p_sw_classicModeEnabled 1
+            es_xmsg classic mode will be enabled next round
+        }
+    }
+}
+
+block disableClassicMode
+{
+    es_keygetvalue b4p_sw_modelName b4p_sw_key server_var(b4p_sw_tempUserIds) b4p_sw_key_modelName
+    es_format b4p_sw_modelPath "%1/%2/%2" server_var(b4p_sw_modelHome) server_var(b4p_sw_modelName)
+    es playerset model server_var(b4p_sw_tempUserIds) server_var(b4p_sw_modelPath)
+}
+
+block enableClassicMode
+{
+    es_xformatv chee_gravity "gravity %1" b4p_sw_normalGravity
+    foreach player b4p_sw_tempUserIds #all "es_fire server_var(b4p_sw_tempUserIds) !self addoutput server_var(chee_gravity)"
+
+    if (server_var(b4p_sw_empireTeamNumber) == 3) do
+    {
+        foreach player b4p_sw_tempUserIds #ct "es setTeamStormTroopers server_var(b4p_sw_tempUserIds)"
+        foreach player b4p_sw_tempUserIds #t "es setTeamRebels server_var(b4p_sw_tempUserIds)"
+    }
+    if (server_var(b4p_sw_empireTeamNumber) == 2) do
+    {
+        foreach player b4p_sw_tempUserIds #ct "es setTeamRebels server_var(b4p_sw_tempUserIds)"
+        foreach player b4p_sw_tempUserIds #t "es setTeamStormTroopers server_var(b4p_sw_tempUserIds)"
+    }
+}
+
+block setTeamStormTroopers
+{
+    es_xgetargs b4p_sw_tempUserIds
+    es_format b4p_sw_modelPath "%1/b4p_stormt/b4p_stormt" server_var(b4p_sw_modelHome)
+    es playerset model server_var(b4p_sw_tempUserIds) server_var(b4p_sw_modelPath)
+    es_keysetvalue b4p_sw_key server_var(b4p_sw_tempUserIds) b4p_sw_key_tempModelName "b4p_stormt"
+}
+
+block setTeamRebels
+{
+    es_xgetargs b4p_sw_tempUserIds
+    es_format b4p_sw_modelPath "%1/b4p_rebel/b4p_rebel" server_var(b4p_sw_modelHome)
+    es playerset model server_var(b4p_sw_tempUserIds) server_var(b4p_sw_modelPath)
+    es_keysetvalue b4p_sw_key server_var(b4p_sw_tempUserIds) b4p_sw_key_tempModelName "b4p_rebel"
+}
+
+block enableBobaJets
+{
+    es_xgetargs b4p_sw_tempUserIds
+    es_keygetvalue b4p_sw_modelName b4p_sw_key server_var(b4p_sw_tempUserIds) b4p_sw_key_tempModelName
+    if (server_var(b4p_sw_modelName) == "b4p_bobafett") do
+    {
+        es_xformatv chee_gravity "gravity %1" b4p_sw_bobaFettGravity
+        es_fire server_var(b4p_sw_tempUserIds) !self addoutput server_var(chee_gravity)
+    }
+}
+
+block rebelMenuShow
+{
+    es_xset exists_var 0
+    popup exists rebelMenuShow_popup exists_var
+    if (server_var(exists_var) == 1) then popup delete rebelMenuShow_popup
+    popup create rebelMenuShow_popup
+    popup addline rebelMenuShow_popup "choose a class (Rebel):"
+    es_format b4p_sw_menuItem1 "->1. %1" server_var(b4p_sw_RebelModelName1)
+    es_format b4p_sw_menuItem2 "->2. %1" server_var(b4p_sw_RebelModelName2)
+    es_format b4p_sw_menuItem3 "->3. %1" server_var(b4p_sw_RebelModelName3)
+    es_format b4p_sw_menuItem4 "->4. %1" server_var(b4p_sw_RebelModelName4)
+    es_format b4p_sw_menuItem5 "->5. %1" server_var(b4p_sw_RebelModelName5)
+    es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_modelName
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_RebelModelFileName1)) then es_format b4p_sw_menuItem1 "%1 (Current Model)" server_var(b4p_sw_menuItem1)
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_RebelModelFileName2)) then es_format b4p_sw_menuItem2 "%1 (Current Model)" server_var(b4p_sw_menuItem2)
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_RebelModelFileName3)) then es_format b4p_sw_menuItem3 "%1 (Current Model)" server_var(b4p_sw_menuItem3)
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_RebelModelFileName4)) then es_format b4p_sw_menuItem4 "%1 (Current Model)" server_var(b4p_sw_menuItem4)
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_RebelModelFileName5)) then es_format b4p_sw_menuItem5 "%1 (Current Model)" server_var(b4p_sw_menuItem5)
+    es popup addline rebelMenuShow_popup server_var(b4p_sw_menuItem1)
+    es popup addline rebelMenuShow_popup server_var(b4p_sw_menuItem2)
+    es popup addline rebelMenuShow_popup server_var(b4p_sw_menuItem3)
+    es popup addline rebelMenuShow_popup server_var(b4p_sw_menuItem4)
+    es popup addline rebelMenuShow_popup server_var(b4p_sw_menuItem5)
+    popup addline rebelMenuShow_popup "0. Close"
+    popup menuselect rebelMenuShow_popup b4p_starwars/rebelMenuAction
+    es popup send rebelMenuShow_popup event_var(userid)
+}
+
+block empireMenuShow
+{
+    es_xset exists_var 0
+    popup exists empireMenuShow_popup exists_var
+    if (server_var(exists_var) == 1) then popup delete empireMenuShow_popup
+    popup create empireMenuShow_popup
+    popup addline empireMenuShow_popup "choose a class (Empire):"
+    es_format b4p_sw_menuItem1 "->1. %1" server_var(b4p_sw_EmpireModelName1)
+    es_format b4p_sw_menuItem2 "->2. %1" server_var(b4p_sw_EmpireModelName2)
+    es_format b4p_sw_menuItem3 "->3. %1" server_var(b4p_sw_EmpireModelName3)
+    es_format b4p_sw_menuItem4 "->4. %1" server_var(b4p_sw_EmpireModelName4)
+    es_format b4p_sw_menuItem5 "->5. %1" server_var(b4p_sw_EmpireModelName5)
+    es_keygetvalue b4p_sw_modelName b4p_sw_key event_var(userid) b4p_sw_key_modelName
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_EmpireModelFileName1)) do
+    {
+        es_format b4p_sw_menuItem1 "%1 (Current Model)" server_var(b4p_sw_menuItem1)
+    }
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_EmpireModelFileName2)) do
+    {
+        es_format b4p_sw_menuItem2 "%1 (Current Model)" server_var(b4p_sw_menuItem2)
+    }
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_EmpireModelFileName3)) do
+    {
+        es_format b4p_sw_menuItem3 "%1 (Current Model)" server_var(b4p_sw_menuItem3)
+    }
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_EmpireModelFileName4)) do
+    {
+        es_format b4p_sw_menuItem4 "%1 (Current Model)" server_var(b4p_sw_menuItem4)
+    }
+    if (server_var(b4p_sw_modelName) == server_var(b4p_sw_EmpireModelFileName5)) do
+    {
+        es_format b4p_sw_menuItem5 "%1 (Current Model)" server_var(b4p_sw_menuItem5)
+    }
+    es popup addline empireMenuShow_popup server_var(b4p_sw_menuItem1)
+    es popup addline empireMenuShow_popup server_var(b4p_sw_menuItem2)
+    es popup addline empireMenuShow_popup server_var(b4p_sw_menuItem3)
+    es popup addline empireMenuShow_popup server_var(b4p_sw_menuItem4)
+    es popup addline empireMenuShow_popup server_var(b4p_sw_menuItem5)
+    popup addline empireMenuShow_popup "0. Close"
+    popup menuselect empireMenuShow_popup b4p_starwars/empireMenuAction
+    es popup send empireMenuShow_popup event_var(userid)
+}
+
+block rebelMenuAction
+{
+    if (server_var(_popup_choice) in "1,2,3,4,5") do
+    {
+        es_xsetinfo b4p_sw_modelMenuActive 0
+        es_xsetinfo b4p_sw_previousModelName 0
+        es_keygetvalue b4p_sw_previousModelName b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName
+        es_keygetvalue b4p_sw_modelMenuActive b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelMenuActive
+        es_getplayerteam b4p_sw_teamNumber server_var(_popup_userid)
+        if (server_var(b4p_sw_teamNumber) == server_var(b4p_sw_empireTeamNumber)) then es_setinfo _popup_choice 0
+        if (server_var(_popup_choice) == 1) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName1)
+        if (server_var(_popup_choice) == 2) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName2)
+        if (server_var(_popup_choice) == 3) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName3)
+        if (server_var(_popup_choice) == 4) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName4)
+        if (server_var(_popup_choice) == 5) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_RebelModelFileName5)
+        es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_menu 0
+        es_keygetvalue b4p_sw_modelName b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName
+        es_format b4p_sw_modelPath "%1/%2/%2" server_var(b4p_sw_modelHome) server_var(b4p_sw_modelName)
+        es playerset model server_var(_popup_userid) server_var(b4p_sw_modelPath)
+        if (server_var(b4p_sw_previousModelName) != server_var(b4p_sw_modelName)) then es_tell server_var(_popup_userid) You are now server_var(b4p_sw_modelName)
+        if (server_var(b4p_sw_previousModelName) == server_var(b4p_sw_modelName)) then es_tell server_var(_popup_userid) the chosen model already is your current model
+    }
+}
+block empireMenuAction
+{
+    if (server_var(_popup_choice) in "1,2,3,4,5") do
+    {
+        es_xsetinfo b4p_sw_modelMenuActive 0
+        es_xsetinfo b4p_sw_previousModelName 0
+        es_keygetvalue b4p_sw_previousModelName b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName
+        es_keygetvalue b4p_sw_modelMenuActive b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelMenuActive
+        es_getplayerteam b4p_sw_teamNumber server_var(_popup_userid)
+        if (server_var(b4p_sw_teamNumber) != server_var(b4p_sw_empireTeamNumber)) then es_setinfo _popup_choice 0
+        if (server_var(_popup_choice) == 1) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName1)
+        if (server_var(_popup_choice) == 2) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName2)
+        if (server_var(_popup_choice) == 3) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName3)
+        if (server_var(_popup_choice) == 4) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName4)
+        if (server_var(_popup_choice) == 5) then es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName server_var(b4p_sw_EmpireModelFileName5)
+        es_keysetvalue b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelMenuActive 0
+        es_keygetvalue b4p_sw_modelName b4p_sw_key server_var(_popup_userid) b4p_sw_key_modelName
+        es_format b4p_sw_modelPath "%1/%2/%2" server_var(b4p_sw_modelHome) server_var(b4p_sw_modelName)
+        es playerset model server_var(_popup_userid) server_var(b4p_sw_modelPath)
+        if (server_var(b4p_sw_previousModelName) != server_var(b4p_sw_modelName)) then es_tell server_var(_popup_userid) You are now server_var(b4p_sw_modelName)
+        if (server_var(b4p_sw_previousModelName) == server_var(b4p_sw_modelName)) then es_tell server_var(_popup_userid) the chosen model already is your current model
+    }
+}

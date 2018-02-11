@@ -1,0 +1,6 @@
+
+
+    b4p_starwars needs versions of software similar to the following:
+
+        eventscripts v2.1.1.366+:
+            http://forums.eventscripts.com/viewtopic.php?f=128&t=40765
